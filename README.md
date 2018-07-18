@@ -33,6 +33,14 @@ curl --header "Content-Type: application/json" \
   http://localhost:5000/api/delete_task
 ```
 
+### update_task
+```
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"task_id":"2","title":"update","content":"hoho","pinned":1}' \
+  http://localhost:5000/api/update_task
+```
+
 
 ## How to view tables
 ```

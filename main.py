@@ -61,7 +61,26 @@ def delete_task():
         DELETE FROM task WHERE id=?
     """, (request.json['task_id'],))
     
-    return jsonify(response, 200)
+    return jsonify(response), 200
+
+@app.route('/api/update_task', methods=['POST'])
+def update_task():
+    new_task = (
+        request.json['title'],
+        request.json['content'],
+        request.json['pinned'],
+        request.json['task_id'],
+    )
+    response = changeData("""
+        UPDATE task 
+        SET
+            title   = ?,
+            content = ?,
+            pinned  = ?
+        WHERE id = ?
+    """, new_task)
+
+    return jsonify(response), 200    
 
 
 def fetch_reminder(task_id):
