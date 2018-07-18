@@ -2,7 +2,10 @@
 
 ## `/api/retrieve_task`
 ### Params
-No need
+Email. For example,
+```
+http://localhost:5000/api/retrieve_task/john@gmail.com
+```
 ### Response 
 ```ts
 type Response = Task[]
