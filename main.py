@@ -35,9 +35,14 @@ def home():
 	return """<p>It works!</p>"""
 
 
-@app.route('/api/users', methods=['GET'])
-def users():
-	data = fetchData(parseUser, 'SELECT * FROM user')
+@app.route('/api/admin/see_table/<string:table>', methods=['GET'])
+def admin_get_table(table):
+	parser = {
+		'user': 	parseUser,
+		'task': 	parseTask,
+		'reminder':	parseReminder
+	}
+	data = fetchData(parser[table], f'SELECT * FROM {table}')
 	return jsonify(data), 200
 
 	
@@ -54,27 +59,27 @@ def fetch_reminder(task_id):
 	"""
 	SELECT * FROM reminder
 	WHERE task_id = ?
-	""", task_id)
+	""", (task_id,))
 	
 def fetch_task(user_id):
 	return fetchData(parseTask, 
 	"""
 	SELECT * FROM task
 	WHERE user_id = ?
-	""", user_id)
+	""", (user_id,))
 
 def fetch_user_id(email):
 	return fetchData(parseUser, 
 	"""
 	SELECT * FROM user
 	WHERE email = ?
-	""", email)[0]["id"]
+	""", (email,))[0]["id"]
 	
 def fetchData(parser, query, queryParam=None):
 	db = sqlite3.connect(DB)
 	cursor = db.cursor()
 	if queryParam:
-		cursor.execute(query, (str(queryParam),))
+		cursor.execute(query, queryParam)
 	else:
 		cursor.execute(query)
 	rows = cursor.fetchall()
@@ -84,52 +89,37 @@ def fetchData(parser, query, queryParam=None):
 		result.append(parser(row))
 	return result
 
-@app.route('/api/places/<int:place>', methods=['GET'])
-def show(place):
-    db = sqlite3.connect(DB)
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM places WHERE id=?', (str(place),))
-    row = cursor.fetchone()
-    db.close()
+def insertData(query, queryParam):
+	db = sqlite3.connect(DB)
+	cursor = db.cursor()
+	cursor.execute(query, queryParam)
+	id = cursor.lastrowid
+	db.commit()
+	response = {
+		'id': id,
+		'affected': db.total_changes,
+	}
+	db.close()
+	return response
+	
 
-    if row:
-        row_as_dict = get_row_as_dict(row)
-        return jsonify(row_as_dict), 200
-    else:
-        return jsonify(None), 200
-
-
-@app.route('/api/places', methods=['POST'])
+@app.route('/api/new_task', methods=['POST'])
 def store():
-    if not request.json:
-        abort(404)
+	if not request.json:
+		abort(404)
+		
+	new_task = (
+        request.json['user_id'],
+        request.json['title'],
+        request.json['content'],
+        request.json['pinned'],
+	)
+	response = insertData("""
+        INSERT INTO task (user_id,title,content,pinned)
+        VALUES(?,?,?,?)
+    """, new_task)
 
-    new_place = (
-        request.json['name'],
-        request.json['city'],
-        request.json['date'],
-    )
-
-    db = sqlite3.connect(DB)
-    cursor = db.cursor()
-
-    cursor.execute('''
-        INSERT INTO places(name,city,date)
-        VALUES(?,?,?)
-    ''', new_place)
-
-    place_id = cursor.lastrowid
-
-    db.commit()
-
-    response = {
-        'id': place_id,
-        'affected': db.total_changes,
-    }
-
-    db.close()
-
-    return jsonify(response), 201
+	return jsonify(response), 200
 
 
 @app.route('/api/places/<int:place>', methods=['PUT'])
