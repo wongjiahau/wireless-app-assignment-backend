@@ -27,7 +27,7 @@ interface Reminder {
 
 ## `/api/create_task`
 ### Params
-```
+```ts
 interface CreateTaskParam {
 	user_id: number;
 	title:   string;
@@ -45,7 +45,7 @@ inteface Response {
 
 ## `/api/delete_task`
 ### Params
-```
+```ts
 interface DeleteTaskParam {
 	task_id: number;
 }
@@ -61,7 +61,7 @@ inteface Response {
 
 ## `/api/update_task`
 ### Params
-```
+```ts
 interface DeleteTaskParam {
 	task_id:   number;
 	title:     string;
