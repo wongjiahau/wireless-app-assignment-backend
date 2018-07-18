@@ -5,14 +5,14 @@ db.execute('DROP TABLE IF EXISTS places')
 
 db.execute('''
 	CREATE TABLE user(
-		id 		integer	PRIMARY KEY,
+		id 		integer PRIMARY KEY AUTOINCREMENT,
 		email 	text 	UNIQUE NOT NULL
 	)
 ''')
 
 db.execute('''
 	CREATE TABLE task(
-		id 		integer PRIMARY KEY,
+		id 		integer PRIMARY KEY AUTOINCREMENT,
 		user_id	integer,
 		title 	text 	NOT NULL,
 		content text 	NOT NULL,
@@ -23,7 +23,7 @@ db.execute('''
 
 db.execute('''
 	CREATE TABLE reminder(
-		id 			integer PRIMARY KEY,
+		id 			integer PRIMARY KEY AUTOINCREMENT,
 		task_id 	integer,
 		date 		integer, 
 		FOREIGN KEY(task_id) REFERENCES task(id)
@@ -33,8 +33,13 @@ db.execute('''
 cursor = db.cursor()
 
 cursor.execute('''
-    INSERT INTO user(name,city,date)
-    VALUES('Forbidden City','Beijing','1274716800000')
+    INSERT INTO task(email)
+    VALUES('john@gmail.com')
+''')
+
+cursor.execute('''
+    INSERT INTO task(email)
+    VALUES('john@gmail.com')
 ''')
 
 
