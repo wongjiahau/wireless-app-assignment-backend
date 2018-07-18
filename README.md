@@ -12,18 +12,27 @@ python main.py
 ```
 
 ## How to test?
-### get_task
+### retrieve_task
 ```
-curl http://localhost:5000/api/get_task/john@gmail.com
+curl http://localhost:5000/api/retrieve_task/john@gmail.com
 ```
 
-### new_task
+### create_task
 ```
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '{"user_id":"1","title":"new","content":"oop","pinned":0}' \
-  http://localhost:5000/api/new_task
+  http://localhost:5000/api/create_task
 ```
+
+### delete_task
+```
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"task_id": 1}' \
+  http://localhost:5000/api/delete_task
+```
+
 
 ## How to view tables
 ```

@@ -5,6 +5,87 @@ from argparse import ArgumentParser
 
 DB = 'db.sqlite'
 
+    
+app = Flask(__name__)
+
+@app.route('/', methods=['GET'])
+def home():
+    return """<p>It works!</p>"""
+
+
+
+@app.route('/api/admin/see_table/<string:table>', methods=['GET'])
+def admin_get_table(table):
+    parser = {
+        'user':     parseUser,
+        'task':     parseTask,
+        'reminder':    parseReminder
+    }
+    data = fetchData(parser[table], f'SELECT * FROM {table}')
+    return jsonify(data), 200
+
+    
+@app.route('/api/retrieve_task/<string:email>', methods=['GET'])
+def retrieve_task(email):
+    user_id = fetch_user_id(email)
+    tasks = fetch_task(user_id)
+    for task in tasks:
+        task["reminder"] = fetch_reminder(task["id"])
+    return jsonify(tasks), 200
+
+@app.route('/api/create_task', methods=['POST'])
+def create_task():
+    if not request.json:
+        abort(404)
+        
+    new_task = (
+        request.json['user_id'],
+        request.json['title'],
+        request.json['content'],
+        request.json['pinned'],
+    )
+    
+    response = changeData("""
+        INSERT INTO task (user_id,title,content,pinned)
+        VALUES(?,?,?,?)
+    """, new_task)
+
+    return jsonify(response), 200    
+
+@app.route('/api/delete_task', methods=['POST'])
+def delete_task():
+    if not request.json:
+        abort(404)
+
+    response = changeData("""
+        DELETE FROM task WHERE id=?
+    """, (request.json['task_id'],))
+    
+    return jsonify(response, 200)
+
+
+def fetch_reminder(task_id):
+    return fetchData(parseReminder, 
+    """
+    SELECT * FROM reminder
+    WHERE task_id = ?
+    """, (task_id,))
+    
+def fetch_task(user_id):
+    return fetchData(parseTask, 
+    """
+    SELECT * FROM task
+    WHERE user_id = ?
+    """, (user_id,))
+
+def fetch_user_id(email):
+    return fetchData(parseUser, 
+    """
+    SELECT * FROM user
+    WHERE email = ?
+    """, (email,))[0]["id"]
+
+
 
 def parseUser(row):
     return {
@@ -28,53 +109,6 @@ def parseReminder(row):
         'date':     row[2],
     }
     
-app = Flask(__name__)
-
-@app.route('/', methods=['GET'])
-def home():
-    return """<p>It works!</p>"""
-
-
-@app.route('/api/admin/see_table/<string:table>', methods=['GET'])
-def admin_get_table(table):
-    parser = {
-        'user':     parseUser,
-        'task':     parseTask,
-        'reminder':    parseReminder
-    }
-    data = fetchData(parser[table], f'SELECT * FROM {table}')
-    return jsonify(data), 200
-
-    
-@app.route('/api/get_task/<string:email>', methods=['GET'])
-def get_task(email):
-    user_id = fetch_user_id(email)
-    tasks = fetch_task(user_id)
-    for task in tasks:
-        task["reminder"] = fetch_reminder(task["id"])
-    return jsonify(tasks), 200
-
-def fetch_reminder(task_id):
-    return fetchData(parseReminder, 
-    """
-    SELECT * FROM reminder
-    WHERE task_id = ?
-    """, (task_id,))
-    
-def fetch_task(user_id):
-    return fetchData(parseTask, 
-    """
-    SELECT * FROM task
-    WHERE user_id = ?
-    """, (user_id,))
-
-def fetch_user_id(email):
-    return fetchData(parseUser, 
-    """
-    SELECT * FROM user
-    WHERE email = ?
-    """, (email,))[0]["id"]
-    
 def fetchData(parser, query, queryParam=None):
     db = sqlite3.connect(DB)
     cursor = db.cursor()
@@ -89,7 +123,8 @@ def fetchData(parser, query, queryParam=None):
         result.append(parser(row))
     return result
 
-def insertData(query, queryParam):
+# Change means : INSERT, UPDATE or DELETE
+def changeData(query, queryParam):
     db = sqlite3.connect(DB)
     cursor = db.cursor()
     cursor.execute(query, queryParam)
@@ -102,92 +137,6 @@ def insertData(query, queryParam):
     db.close()
     return response
     
-
-@app.route('/api/new_task', methods=['POST'])
-def store():
-    if not request.json:
-        abort(404)
-        
-    new_task = (
-        request.json['user_id'],
-        request.json['title'],
-        request.json['content'],
-        request.json['pinned'],
-    )
-    response = insertData("""
-        INSERT INTO task (user_id,title,content,pinned)
-        VALUES(?,?,?,?)
-    """, new_task)
-
-    return jsonify(response), 200
-
-
-@app.route('/api/places/<int:place>', methods=['PUT'])
-def update(place):
-    if not request.json:
-        abort(400)
-
-    if 'id' not in request.json:
-        abort(400)
-
-    if int(request.json['id']) != place:
-        abort(400)
-
-    update_place = (
-        request.json['name'],
-        request.json['city'],
-        request.json['date'],
-        str(place),
-    )
-
-    db = sqlite3.connect(DB)
-    cursor = db.cursor()
-
-    cursor.execute('''
-        UPDATE places SET
-            name=?,city=?,date=?
-        WHERE id=?
-    ''', update_place)
-
-    db.commit()
-
-    response = {
-        'id': place,
-        'affected': db.total_changes,
-    }
-
-    db.close()
-
-    return jsonify(response), 201
-
-
-@app.route('/api/places/<int:place>', methods=['DELETE'])
-def delete(place):
-    if not request.json:
-        abort(400)
-
-    if 'id' not in request.json:
-        abort(400)
-
-    if int(request.json['id']) != place:
-        abort(400)
-
-    db = sqlite3.connect(DB)
-    cursor = db.cursor()
-
-    cursor.execute('DELETE FROM places WHERE id=?', (str(place),))
-
-    db.commit()
-
-    response = {
-        'id': place,
-        'affected': db.total_changes,
-    }
-
-    db.close()
-
-    return jsonify(response), 201
-
 
 if __name__ == '__main__':
     parser = ArgumentParser()
