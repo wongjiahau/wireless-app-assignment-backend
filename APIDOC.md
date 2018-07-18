@@ -17,8 +17,64 @@ interface Task {
 }
 
 interface Reminder {
-	date:		number; // Epoch time in seconds
-	id:			number;
-	task_id:	number;
+	date:       number; // Epoch time in seconds
+	id:         number;
+	task_id:    number;
 }
 ```
+
+<hr>
+
+## `/api/create_task`
+### Params
+```
+interface CreateTaskParam {
+	user_id: number;
+	title:   string;
+	content: string;
+	pinned:  number; // Either 1 or 0
+}
+```
+### Response 
+```ts
+inteface Response {
+	affected: number;
+	id:       number;
+}
+```
+
+## `/api/delete_task`
+### Params
+```
+interface DeleteTaskParam {
+	task_id: number;
+}
+```
+### Response 
+```ts
+inteface Response {
+	affected: number;
+	id:       number;
+}
+```
+<hr>
+
+## `/api/update_task`
+### Params
+```
+interface DeleteTaskParam {
+	task_id:   number;
+	title:     string;
+	content:   string;
+	pinned:    number; // Either 1 or 0
+}
+```
+### Response 
+```ts
+inteface Response {
+	affected: number;
+	id:       number;
+}
+```
+<hr>
+
