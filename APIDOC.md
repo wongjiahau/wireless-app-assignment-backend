@@ -1,10 +1,10 @@
 # API Documentation
 
-## `/api/retrieve_task`
+## Retrieve task `/api/task` (method = `GET`)
 ### Params
 Email. For example,
 ```
-http://localhost:5000/api/retrieve_task/john@gmail.com
+http://localhost:5000/api/task/john@gmail.com
 ```
 ### Response 
 ```ts
@@ -28,7 +28,7 @@ interface Reminder {
 
 <hr>
 
-## `/api/create_task`
+## Update task `/api/task` (method = `PUT`)
 ### Params
 ```ts
 interface CreateTaskParam {
@@ -46,7 +46,7 @@ inteface Response {
 }
 ```
 
-## `/api/delete_task`
+## Delete task `/api/delete_task` (method = `DELETE`)
 ### Params
 ```ts
 interface DeleteTaskParam {
@@ -62,7 +62,7 @@ inteface Response {
 ```
 <hr>
 
-## `/api/update_task`
+## Update task `/api/update_task` (method = `POST`)
 ### Params
 ```ts
 interface DeleteTaskParam {

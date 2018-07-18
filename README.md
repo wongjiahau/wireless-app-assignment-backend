@@ -14,31 +14,31 @@ python main.py
 ## How to test?
 ### retrieve_task
 ```
-curl http://localhost:5000/api/retrieve_task/john@gmail.com
+curl http://localhost:5000/api/task/john@gmail.com
 ```
 
-### create_task
+### Create task
 ```
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '{"user_id":"1","title":"new","content":"oop","pinned":0}' \
-  http://localhost:5000/api/create_task
+  http://localhost:5000/api/task
 ```
 
-### delete_task
+### Delete task
 ```
 curl --header "Content-Type: application/json" \
-  --request POST \
+  --request DELETE \
   --data '{"task_id": 1}' \
-  http://localhost:5000/api/delete_task
+  http://localhost:5000/api/task
 ```
 
-### update_task
+### Update task
 ```
 curl --header "Content-Type: application/json" \
-  --request POST \
+  --request PUT \
   --data '{"task_id":"2","title":"update","content":"hoho","pinned":1}' \
-  http://localhost:5000/api/update_task
+  http://localhost:5000/api/task
 ```
 
 

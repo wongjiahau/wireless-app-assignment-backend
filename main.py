@@ -25,7 +25,7 @@ def admin_get_table(table):
     return jsonify(data), 200
 
     
-@app.route('/api/retrieve_task/<string:email>', methods=['GET'])
+@app.route('/api/task/<string:email>', methods=['GET'])
 def retrieve_task(email):
     user_id = fetch_user_id(email)
     tasks = fetch_task(user_id)
@@ -33,7 +33,7 @@ def retrieve_task(email):
         task["reminder"] = fetch_reminder(task["id"])
     return jsonify(tasks), 200
 
-@app.route('/api/create_task', methods=['POST'])
+@app.route('/api/task', methods=['POST'])
 def create_task():
     if not request.json:
         abort(404)
@@ -52,7 +52,7 @@ def create_task():
 
     return jsonify(response), 200    
 
-@app.route('/api/delete_task', methods=['POST'])
+@app.route('/api/task', methods=['DELETE'])
 def delete_task():
     if not request.json:
         abort(404)
@@ -63,7 +63,7 @@ def delete_task():
     
     return jsonify(response), 200
 
-@app.route('/api/update_task', methods=['POST'])
+@app.route('/api/task', methods=['PUT'])
 def update_task():
     new_task = (
         request.json['title'],
