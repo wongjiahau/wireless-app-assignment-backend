@@ -37,18 +37,31 @@ def home():
 
 @app.route('/api/users', methods=['GET'])
 def users():
-	return fetchData('SELECT * from USER', parseUser)
+	data = fetchData(parseUser, 'SELECT * FROM user')
+	return jsonify(data), 200
 
-def fetchData(query, parser):
+@app.route('/api/user_id/<string:email>', methods=['GET'])
+def user_id(email):
+	data = fetchData(parseUser, 
+	"""
+	SELECT * FROM user
+	WHERE email = ?
+	""", email)[0]["id"]
+	return jsonify(data), 200
+	
+def fetchData(parser, query, queryParam=None):
 	db = sqlite3.connect(DB)
 	cursor = db.cursor()
-	cursor.execute(query)
+	if queryParam:
+		cursor.execute(query, (str(queryParam),))
+	else:
+		cursor.execute(query)
 	rows = cursor.fetchall()
 	db.close()
 	result = []
 	for row in rows:
 		result.append(parser(row))
-	return jsonify(result), 200
+	return result
 
 @app.route('/api/places/<int:place>', methods=['GET'])
 def show(place):
