@@ -4,11 +4,20 @@ db = sqlite3.connect('db.sqlite')
 db.execute('DROP TABLE IF EXISTS places')
 
 db.execute('''
+	CREATE TABLE user(
+		id 		integer	PRIMARY KEY,
+		email 	text 	UNIQUE NOT NULL
+	)
+''')
+
+db.execute('''
 	CREATE TABLE task(
 		id 		integer PRIMARY KEY,
+		user_id	integer,
 		title 	text 	NOT NULL,
 		content text 	NOT NULL,
-		pinned 	integer NOT NULL
+		pinned 	integer NOT NULL,
+		FOREIGN KEY(user_id) REFERENCES user(id)
 	)
 ''')
 
@@ -24,7 +33,7 @@ db.execute('''
 cursor = db.cursor()
 
 cursor.execute('''
-    INSERT INTO places(name,city,date)
+    INSERT INTO user(name,city,date)
     VALUES('Forbidden City','Beijing','1274716800000')
 ''')
 
