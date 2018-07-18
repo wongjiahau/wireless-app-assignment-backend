@@ -40,14 +40,26 @@ def users():
 	data = fetchData(parseUser, 'SELECT * FROM user')
 	return jsonify(data), 200
 
-@app.route('/api/user_id/<string:email>', methods=['GET'])
-def user_id(email):
-	data = fetchData(parseUser, 
+	
+@app.route('/api/get_task/<string:email>', methods=['GET'])
+def get_task(email):
+	user_id = fetch_user_id(email)
+	tasks = fetch_task(user_id)
+	return jsonify(tasks), 200
+
+def fetch_task(user_id):
+	return fetchData(parseTask, 
+	"""
+	SELECT * FROM task
+	WHERE user_id = ?
+	""", user_id)
+
+def fetch_user_id(email):
+	return fetchData(parseUser, 
 	"""
 	SELECT * FROM user
 	WHERE email = ?
 	""", email)[0]["id"]
-	return jsonify(data), 200
 	
 def fetchData(parser, query, queryParam=None):
 	db = sqlite3.connect(DB)
