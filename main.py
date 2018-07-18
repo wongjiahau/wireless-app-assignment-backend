@@ -45,8 +45,17 @@ def users():
 def get_task(email):
 	user_id = fetch_user_id(email)
 	tasks = fetch_task(user_id)
+	for task in tasks:
+		task["reminder"] = fetch_reminder(task["id"])
 	return jsonify(tasks), 200
 
+def fetch_reminder(task_id):
+	return fetchData(parseReminder, 
+	"""
+	SELECT * FROM reminder
+	WHERE task_id = ?
+	""", task_id)
+	
 def fetch_task(user_id):
 	return fetchData(parseTask, 
 	"""
