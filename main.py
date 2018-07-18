@@ -6,44 +6,49 @@ from argparse import ArgumentParser
 DB = 'db.sqlite'
 
 
-def get_row_as_dict(row):
-    row_dict = {
-        'id': row[0],
-        'name': row[1],
-        'city': row[2],
-        'date': row[3],
+def parseUser(row):
+    return {
+        'id': 		row[0],
+        'email': 	row[1],
+    }
+	
+def parseTask(row):
+    return {
+        'id': 		row[0],
+        'user_id': 	row[1],
+		'title': 	row[2],
+		'content': 	row[3],
+		'pinned': 	row[4],
     }
 
-    return row_dict
-
-
+def parseReminder(row):
+    return {
+        'id': 		row[0],
+        'task_id': 	row[1],
+		'date': 	row[2],
+    }
+	
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def home():
-	return """
-	<p>Hello</p>
-	"""
+	return """<p>It works!</p>"""
 
 
-@app.route('/api/places', methods=['GET'])
-def index():
-    db = sqlite3.connect(DB)
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM places ORDER BY name')
-    rows = cursor.fetchall()
+@app.route('/api/users', methods=['GET'])
+def users():
+	return fetchData('SELECT * from USER', parseUser)
 
-    print(rows)
-
-    db.close()
-
-    rows_as_dict = []
-    for row in rows:
-        row_as_dict = get_row_as_dict(row)
-        rows_as_dict.append(row_as_dict)
-
-    return jsonify(rows_as_dict), 200
-
+def fetchData(query, parser):
+	db = sqlite3.connect(DB)
+	cursor = db.cursor()
+	cursor.execute(query)
+	rows = cursor.fetchall()
+	db.close()
+	result = []
+	for row in rows:
+		result.append(parser(row))
+	return jsonify(result), 200
 
 @app.route('/api/places/<int:place>', methods=['GET'])
 def show(place):

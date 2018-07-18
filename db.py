@@ -25,21 +25,34 @@ db.execute('''
 	CREATE TABLE reminder(
 		id 			integer PRIMARY KEY AUTOINCREMENT,
 		task_id 	integer,
-		date 		integer, 
+		date 		integer, -- use epoch time in seconds
 		FOREIGN KEY(task_id) REFERENCES task(id)
 	)
 ''')
 
 cursor = db.cursor()
 
+# Insert one dummy user
 cursor.execute('''
-    INSERT INTO task(email)
+    INSERT INTO user(email)
     VALUES('john@gmail.com')
 ''')
 
+# Insert two dummy tasks
 cursor.execute('''
-    INSERT INTO task(email)
-    VALUES('john@gmail.com')
+    INSERT INTO task(user_id, title, content, pinned)
+    VALUES(1, 'Buy fruits', '2 apples', 0)
+''')
+
+cursor.execute('''
+    INSERT INTO task(user_id, title, content, pinned)
+    VALUES(1, 'Go shopping', 'at midvalley', 1)
+''')
+
+# Insert one dummy reminder
+cursor.execute('''
+    INSERT INTO reminder(task_id, date)
+    VALUES(1, 1531881357799)
 ''')
 
 
