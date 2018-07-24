@@ -124,7 +124,7 @@ def fetch_user_id(email, password=None):
         """
         SELECT * FROM user
         WHERE email = ?
-        """, (email))[0]["id"]
+        """, (email,))[0]["id"]
 
 
 

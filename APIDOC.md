@@ -43,7 +43,7 @@ interface Reminder {
 
 <hr>
 
-## Update task `/api/task` (method = `PUT`)
+## Create task `/api/task` (method = `POST`)
 ### Params
 ```ts
 interface CreateTaskParam {
@@ -77,10 +77,10 @@ inteface Response {
 ```
 <hr>
 
-## Update task `/api/task` (method = `POST`)
+## Update task `/api/task` (method = `PUT`)
 ### Params
 ```ts
-interface DeleteTaskParam {
+interface UpdateTaskParam {
 	task_id:   number;
 	title:     string;
 	content:   string;
