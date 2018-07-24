@@ -1,4 +1,19 @@
 # API Documentation
+## Login `/api/login` (method = `POST`)
+### Params
+```ts
+interface LoginParams {
+	email: string;
+	password: string;
+}
+```
+### Response
+```ts
+interface LoginResponse {
+	matching_user_id: number | null;
+}
+```
+
 
 ## Retrieve task `/api/task` (method = `GET`)
 ### Params

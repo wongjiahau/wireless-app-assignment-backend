@@ -5,8 +5,9 @@ db.execute('DROP TABLE IF EXISTS places')
 
 db.execute('''
 	CREATE TABLE user(
-		id 		integer PRIMARY KEY AUTOINCREMENT,
-		email 	text 	UNIQUE NOT NULL
+		id 			integer PRIMARY KEY AUTOINCREMENT,
+		email 		text 	UNIQUE NOT NULL,
+		password 	text 	NOT NULL
 	)
 ''')
 
@@ -34,8 +35,8 @@ cursor = db.cursor()
 
 # Insert one dummy user
 cursor.execute('''
-    INSERT INTO user(email)
-    VALUES('john@gmail.com')
+    INSERT INTO user(email,password)
+    VALUES('john@gmail.com', '1234')
 ''')
 
 # Insert two dummy tasks

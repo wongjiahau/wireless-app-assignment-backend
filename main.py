@@ -12,6 +12,15 @@ app = Flask(__name__)
 def home():
     return """<p>It works!</p>"""
 
+@app.route('/api/login', methods=['POST'])
+def login():
+    if not request.json:
+        abort(404)
+    
+    id = fetch_user_id(request.json["email"], request.json["password"])
+    return jsonify({
+        "matching_user_id": id
+    }), 200
 
 
 @app.route('/api/admin/see_table/<string:table>', methods=['GET'])
@@ -97,12 +106,25 @@ def fetch_task(user_id):
     WHERE user_id = ?
     """, (user_id,))
 
-def fetch_user_id(email):
-    return fetchData(parseUser, 
-    """
-    SELECT * FROM user
-    WHERE email = ?
-    """, (email,))[0]["id"]
+def fetch_user_id(email, password=None):
+    if password:
+        result = fetchData(parseUser, 
+        """
+        SELECT * FROM user
+        WHERE email = ?
+        AND password = ?
+        """, (email,password))
+        
+        if len(result) > 0:
+            return result[0]["id"]
+        else:
+            return None
+    else:
+        return fetchData(parseUser, 
+        """
+        SELECT * FROM user
+        WHERE email = ?
+        """, (email))[0]["id"]
 
 
 

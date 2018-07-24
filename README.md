@@ -12,6 +12,15 @@ python main.py
 ```
 
 ## How to test?
+### Login
+```
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"email":"john@gmail.com", "password": "1234"}' \
+  http://localhost:5000/api/login
+```
+
+
 ### retrieve_task
 ```
 curl http://localhost:5000/api/task/john@gmail.com
