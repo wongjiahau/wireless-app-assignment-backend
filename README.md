@@ -30,7 +30,7 @@ curl http://localhost:5000/api/task/john@gmail.com
 ```
 curl --header "Content-Type: application/json" \
   --request POST \
-  --data '{"user_id":"1","title":"new","content":"oop","pinned":0}' \
+  --data '{"user_id":"1","title":"new","content":"oop","pinned":0, "reminders": [{"date": 12345}]}' \
   http://localhost:5000/api/task
 ```
 
@@ -46,7 +46,7 @@ curl --header "Content-Type: application/json" \
 ```
 curl --header "Content-Type: application/json" \
   --request PUT \
-  --data '{"task_id":"2","title":"update","content":"hoho","pinned":1}' \
+  --data '{"task_id":"2","title":"update","content":"hoho","pinned":1, "reminders":[{"date":7777}]}' \
   http://localhost:5000/api/task
 ```
 

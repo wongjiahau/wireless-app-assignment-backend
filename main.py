@@ -51,13 +51,23 @@ def create_task():
         request.json['user_id'],
         request.json['title'],
         request.json['content'],
-        request.json['pinned'],
+        request.json['pinned']
     )
     
     response = changeData("""
         INSERT INTO task (user_id,title,content,pinned)
         VALUES(?,?,?,?)
     """, new_task)
+
+    task_id = response["id"]
+
+    # Insert reminders
+    reminders = request.json["reminders"]
+    for r in reminders:
+        changeData("""
+            INSERT INTO reminder(task_id, date)
+            VALUES(?,?)
+        """, (task_id, r["date"]))
 
     return jsonify(response), 200    
 
@@ -88,6 +98,23 @@ def update_task():
             pinned  = ?
         WHERE id = ?
     """, new_task)
+
+
+    task_id = request.json['task_id']
+
+    # Delete related reminders
+    changeData("""
+        DELETE FROM reminder WHERE task_id=?
+    """, (task_id,))
+
+    # Update reminders
+    reminders = request.json["reminders"]
+
+    for r in reminders:
+        changeData("""
+            INSERT INTO reminder(task_id, date)
+            VALUES(?,?)
+        """, (task_id, r["date"]))
 
     return jsonify(response), 200    
 

@@ -47,10 +47,15 @@ interface Reminder {
 ### Params
 ```ts
 interface CreateTaskParam {
-	user_id: number;
-	title:   string;
-	content: string;
-	pinned:  number; // Either 1 or 0
+	user_id:   number;
+	title:     string;
+	content:   string;
+	pinned:    number; // Either 1 or 0
+	reminders: Reminder[];
+}
+
+interface Reminder {
+	date:       number; // Epoch time in seconds
 }
 ```
 ### Response 
@@ -85,6 +90,11 @@ interface UpdateTaskParam {
 	title:     string;
 	content:   string;
 	pinned:    number; // Either 1 or 0
+	reminders: Reminder[];
+}
+
+interface Reminder {
+	date:       number; // Epoch time in seconds
 }
 ```
 ### Response 
