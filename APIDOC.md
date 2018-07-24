@@ -11,6 +11,15 @@ interface LoginParams {
 ```ts
 interface LoginResponse {
 	matching_user_id: number | null;
+	session_id: number
+}
+```
+
+## Login `/api/logout` (method = `POST`)
+### Params
+```ts
+interface LogoutParams {
+	session_id: number;
 }
 ```
 

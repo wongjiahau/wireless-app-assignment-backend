@@ -20,6 +20,14 @@ curl --header "Content-Type: application/json" \
   http://localhost:5000/api/login
 ```
 
+### Logout
+```
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"session_id":1532420297001}' \
+  http://localhost:5000/api/logout
+```
+
 
 ### retrieve_task
 The `session_id` can only be get after login.

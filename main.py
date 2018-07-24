@@ -31,6 +31,17 @@ def login():
         "session_id": session_id
     }), 200
 
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    if not request.json:
+        abort(404)
+    
+    return jsonify(changeData("""
+        DELETE FROM session
+        WHERE id = ?
+        """, (request.json["session_id"],))
+    ) , 200
+
 
 @app.route('/api/admin/see_table/<string:table>', methods=['GET'])
 def admin_get_table(table):
