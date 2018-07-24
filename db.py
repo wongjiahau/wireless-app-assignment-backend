@@ -12,6 +12,14 @@ db.execute('''
 ''')
 
 db.execute('''
+	CREATE TABLE session(
+		id	 		integer PRIMARY KEY,
+		user_id		integer,
+		FOREIGN KEY(user_id) REFERENCES user(id)
+	)
+''')
+
+db.execute('''
 	CREATE TABLE task(
 		id 		integer PRIMARY KEY AUTOINCREMENT,
 		user_id	integer,
@@ -54,6 +62,12 @@ cursor.execute('''
 cursor.execute('''
     INSERT INTO reminder(task_id, date)
     VALUES(1, 1531881357799)
+''')
+
+# Insert one dummy session
+cursor.execute('''
+    INSERT INTO session(id, user_id)
+    VALUES(1532420297001, 1)
 ''')
 
 

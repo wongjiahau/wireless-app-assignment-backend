@@ -22,15 +22,16 @@ curl --header "Content-Type: application/json" \
 
 
 ### retrieve_task
+The `session_id` can only be get after login.
 ```
-curl http://localhost:5000/api/task/john@gmail.com
+curl http://localhost:5000/api/task/1532420297001
 ```
 
 ### Create task
 ```
 curl --header "Content-Type: application/json" \
   --request POST \
-  --data '{"user_id":"1","title":"new","content":"oop","pinned":0, "reminders": [{"date": 12345}]}' \
+  --data '{"session_id":1532420297001,"title":"new","content":"oop","pinned":0, "reminders": [{"date": 12345}]}' \
   http://localhost:5000/api/task
 ```
 

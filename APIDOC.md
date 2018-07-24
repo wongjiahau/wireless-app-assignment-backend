@@ -17,9 +17,9 @@ interface LoginResponse {
 
 ## Retrieve task `/api/task` (method = `GET`)
 ### Params
-Email. For example,
+Session_id. For example,
 ```
-http://localhost:5000/api/task/john@gmail.com
+http://localhost:5000/api/task/1532420297001
 ```
 ### Response 
 ```ts
@@ -47,7 +47,7 @@ interface Reminder {
 ### Params
 ```ts
 interface CreateTaskParam {
-	user_id:   number;
+	session_id:   number;
 	title:     string;
 	content:   string;
 	pinned:    number; // Either 1 or 0

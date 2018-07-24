@@ -1,4 +1,5 @@
 import sqlite3
+import time
 from flask import Flask, jsonify, request, abort
 from argparse import ArgumentParser
 
@@ -17,9 +18,17 @@ def login():
     if not request.json:
         abort(404)
     
-    id = fetch_user_id(request.json["email"], request.json["password"])
+    user_id = fetch_user_id(request.json["email"], request.json["password"])
+
+    session_id = int(round(time.time() * 1000))
+    changeData("""
+        INSERT INTO session (id, user_id)
+        VALUES(?,?)
+    """, (session_id, user_id))
+
     return jsonify({
-        "matching_user_id": id
+        "matching_user_id": user_id,
+        "session_id": session_id
     }), 200
 
 
@@ -34,9 +43,9 @@ def admin_get_table(table):
     return jsonify(data), 200
 
     
-@app.route('/api/task/<string:email>', methods=['GET'])
-def retrieve_task(email):
-    user_id = fetch_user_id(email)
+@app.route('/api/task/<string:session_id>', methods=['GET'])
+def retrieve_task(session_id):
+    user_id = fetch_user_id_using_session(session_id)
     tasks = fetch_task(user_id)
     for task in tasks:
         task["reminder"] = fetch_reminder(task["id"])
@@ -47,8 +56,10 @@ def create_task():
     if not request.json:
         abort(404)
         
+    user_id = fetch_user_id_using_session(request.json["session_id"])
+
     new_task = (
-        request.json['user_id'],
+        user_id,
         request.json['title'],
         request.json['content'],
         request.json['pinned']
@@ -133,27 +144,32 @@ def fetch_task(user_id):
     WHERE user_id = ?
     """, (user_id,))
 
-def fetch_user_id(email, password=None):
-    if password:
-        result = fetchData(parseUser, 
-        """
-        SELECT * FROM user
-        WHERE email = ?
-        AND password = ?
-        """, (email,password))
-        
-        if len(result) > 0:
-            return result[0]["id"]
-        else:
-            return None
+def fetch_user_id_using_session(session_id):
+    return fetchData(parseSession,
+    """
+    SELECT * FROM session
+    WHERE id = ?
+    """, (session_id,))[0]["user_id"]
+
+def fetch_user_id(email, password):
+    result = fetchData(parseUser, 
+    """
+    SELECT * FROM user
+    WHERE email = ?
+    AND password = ?
+    """, (email,password))
+    
+    if len(result) > 0:
+        return result[0]["id"]
     else:
-        return fetchData(parseUser, 
-        """
-        SELECT * FROM user
-        WHERE email = ?
-        """, (email,))[0]["id"]
+        return None
 
 
+def parseSession(row):
+    return {
+        'id':         row[0],
+        'user_id':    row[1],
+    }
 
 def parseUser(row):
     return {
