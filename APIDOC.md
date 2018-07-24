@@ -46,7 +46,7 @@ inteface Response {
 }
 ```
 
-## Delete task `/api/delete_task` (method = `DELETE`)
+## Delete task `/api/task` (method = `DELETE`)
 ### Params
 ```ts
 interface DeleteTaskParam {
@@ -62,7 +62,7 @@ inteface Response {
 ```
 <hr>
 
-## Update task `/api/update_task` (method = `POST`)
+## Update task `/api/task` (method = `POST`)
 ### Params
 ```ts
 interface DeleteTaskParam {
