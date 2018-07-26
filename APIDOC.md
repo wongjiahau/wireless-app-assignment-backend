@@ -79,7 +79,8 @@ inteface Response {
 ### Params
 ```ts
 interface DeleteTaskParam {
-	task_id: number;
+	session_id: number;
+	task_id: 	number;
 }
 ```
 ### Response 

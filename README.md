@@ -47,7 +47,7 @@ curl --header "Content-Type: application/json" \
 ```
 curl --header "Content-Type: application/json" \
   --request DELETE \
-  --data '{"task_id": 1}' \
+  --data '{"session_id":1532420297001,"task_id": 1}' \
   http://localhost:5000/api/task
 ```
 
@@ -55,7 +55,7 @@ curl --header "Content-Type: application/json" \
 ```
 curl --header "Content-Type: application/json" \
   --request PUT \
-  --data '{"task_id":"2","title":"update","content":"hoho","pinned":1, "reminders":[{"date":7777}]}' \
+  --data '{"session_id":1532420297001, "task_id":"2","title":"update","content":"hoho","pinned":1, "reminders":[{"date":7777}]}' \
   http://localhost:5000/api/task
 ```
 

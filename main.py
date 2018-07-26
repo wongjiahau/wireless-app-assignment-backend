@@ -97,6 +97,9 @@ def create_task():
 def delete_task():
     if not request.json:
         abort(404)
+    
+    if not fetch_user_id_using_session(request.json["session_id"]):
+        abort(404)
 
     response = changeData("""
         DELETE FROM task WHERE id=?
@@ -106,6 +109,10 @@ def delete_task():
 
 @app.route('/api/task', methods=['PUT'])
 def update_task():
+    print(request.json["session_id"])
+    if not fetch_user_id_using_session(request.json["session_id"]):
+        abort(404)
+
     new_task = (
         request.json['title'],
         request.json['content'],
@@ -156,11 +163,16 @@ def fetch_task(user_id):
     """, (user_id,))
 
 def fetch_user_id_using_session(session_id):
-    return fetchData(parseSession,
+    result = fetchData(parseSession,
     """
     SELECT * FROM session
     WHERE id = ?
-    """, (session_id,))[0]["user_id"]
+    """, (session_id,))
+
+    if len(result) > 0:
+        return result[0]["user_id"]
+    else:
+        return None
 
 def fetch_user_id(email, password):
     result = fetchData(parseUser, 
